@@ -55,7 +55,7 @@
   --popover: oklch(0.985 0.006 95);
   --popover-foreground: oklch(0.235 0.020 145);
 
-  /* Healing green (deep) — primary action */
+  /* Healing green (deep) ,  primary action */
   --primary: oklch(0.45 0.075 150);
   --primary-foreground: oklch(0.974 0.012 95);
 

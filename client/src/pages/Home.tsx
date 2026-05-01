@@ -61,7 +61,7 @@ export default function Home() {
                 <span className="font-normal text-[oklch(0.40_0.04_152)]">It's responding to something.</span>
               </h1>
               <p className="mt-5 text-lg md:text-xl max-w-xl text-[oklch(0.40_0.02_145)] leading-relaxed">
-                Honest writing about autoimmune root causes — AIP, leaky gut,
+                Honest writing about autoimmune root causes ,  AIP, leaky gut,
                 the HPA axis, the things doctors don't have time to explain. Quietly, and without panic.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">

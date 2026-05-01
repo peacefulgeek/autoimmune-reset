@@ -20,7 +20,7 @@ export default function Privacy() {
         </p>
         <h2>Email</h2>
         <p>
-          The contact form is delivered by email through our own server (Nodemailer) — no
+          The contact form is delivered by email through our own server (Nodemailer) ,  no
           third-party email marketing service has access to messages you send us. We do not have
           a mailing list at this time.
         </p>

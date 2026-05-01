@@ -12,7 +12,7 @@ export default function Disclosures() {
         </p>
         <p>
           We only link to books, supplements, and tools we have read, used, or believe are worth
-          a careful look. Every essay caps affiliate links at three to four — we are writers
+          a careful look. Every essay caps affiliate links at three to four ,  we are writers
           first, not a storefront.
         </p>
         <h2>Medical disclaimer</h2>

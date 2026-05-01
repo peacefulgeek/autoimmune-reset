@@ -41,7 +41,7 @@ export default function Contact() {
         <p className="text-xs uppercase tracking-[.18em] text-[oklch(0.45_0.075_150)] mb-2">Reach the writer</p>
         <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">Contact</h1>
         <p className="mt-5 text-[oklch(0.40_0.02_145)] text-lg leading-relaxed">
-          Press, story tips, corrections, or you read something here that helped — we read everything.
+          Press, story tips, corrections, or you read something here that helped ,  we read everything.
           Replies are not medical advice, and they aren't always immediate.
         </p>
         <p className="mt-3 text-sm text-[oklch(0.45_0.02_145)]">

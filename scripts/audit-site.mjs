@@ -120,21 +120,37 @@ async function s9() {
   add("§9 Image policy", VERIFIED, note);
 }
 
+function manifestArticles(m) {
+  if (!m) return [];
+  if (Array.isArray(m.articles)) return m.articles;
+  if (Array.isArray(m.items)) return m.items;
+  return [];
+}
+function articlePublishedAt(a) {
+  return a.publish_at || a.published_at || "";
+}
+function articleAsins(a) {
+  if (Array.isArray(a.asins_used)) return a.asins_used;
+  if (Array.isArray(a.asins)) return a.asins;
+  return [];
+}
+
 // §10 ASIN attribution
 async function s10() {
   const manifest = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json"));
   if (!manifest) return add("§10 ASIN attribution", BLOCKED("manifest missing"));
+  const arts = manifestArticles(manifest);
   let withASINs = 0;
-  for (const a of manifest.items || []) {
-    if ((a.asins_used || []).length) withASINs++;
+  for (const a of arts) {
+    if (articleAsins(a).length) withASINs++;
   }
-  if (withASINs < 5) return add("§10 ASIN attribution", BLOCKED(`only ${withASINs}/${manifest.items.length} carry ASINs`));
+  if (withASINs < 5) return add("§10 ASIN attribution", BLOCKED(`only ${withASINs}/${arts.length} carry ASINs`));
   // Check that bodies use the affiliate tag where amazon URL appears
-  const bodies = (manifest.items || []).map((a) => a.body || "").join("\n");
+  const bodies = arts.map((a) => a.body || "").join("\n");
   if (/amazon\.com\/dp\//.test(bodies) && !/tag=spankyspinola-20/.test(bodies)) {
     return add("§10 ASIN attribution", BLOCKED("amazon.com/dp/ links missing tag=spankyspinola-20"));
   }
-  add("§10 ASIN attribution", VERIFIED, `${withASINs}/${manifest.items.length} articles carry ASINs, all amazon links tagged`);
+  add("§10 ASIN attribution", VERIFIED, `${withASINs}/${arts.length} articles carry ASINs`);
 }
 
 // §11 AEO routes
@@ -203,32 +219,33 @@ async function s17() {
 async function s18() {
   const manifest = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json"));
   if (!manifest) return add("§18 Seed gate", BLOCKED("manifest missing"));
+  const arts = manifestArticles(manifest);
   let bad = 0;
-  for (const a of manifest.items || []) {
+  for (const a of arts) {
     const r = checkText(a.body || "");
-    // Seed entries must have ZERO em-dashes and ZERO hard banned hits
     if (r.em_dashes > 0 || r.banned_hits.filter((h) => h !== "em_dash" && h !== "en_dash").length > 0) {
       bad++;
       console.warn(`[seed-gate] ${a.slug}: ${r.reasons.join("; ")}`);
     }
   }
   if (bad) return add("§18 Seed gate", BLOCKED(`${bad} seed articles fail the gate`));
-  add("§18 Seed gate", VERIFIED, `${manifest.items.length} seed articles pass`);
+  add("§18 Seed gate", VERIFIED, `${arts.length} seed articles pass`);
 }
 
 // §19 Internal/external/self-ref counts in seed
 async function s19() {
   const manifest = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json"));
   if (!manifest) return add("§19 Link discipline", BLOCKED("manifest missing"));
+  const arts = manifestArticles(manifest);
   let bad = 0;
-  for (const a of manifest.items || []) {
+  for (const a of arts) {
     const r = checkText(a.body || "");
     if (r.structural.internal_links < 3 || r.structural.external_links < 1 || !r.structural.self_ref) {
       bad++;
     }
   }
   if (bad) return add("§19 Link discipline", BLOCKED(`${bad} articles missing link minimums`));
-  add("§19 Link discipline", VERIFIED);
+  add("§19 Link discipline", VERIFIED, `${arts.length} articles meet ≥3 internal, ≥1 external, ≥1 self-ref`);
 }
 
 // §20 Multi-day publish cadence (DB) OR seed dates spread
@@ -244,10 +261,11 @@ async function s20() {
     if (total >= 3 && days < 3) return add("§20 Multi-day cadence", BLOCKED(`${total} articles on ${days} day(s)`));
     return add("§20 Multi-day cadence", VERIFIED, `${total} articles across ${days} days`);
   }
-  const manifest = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json")) || { items: [] };
-  const days = new Set((manifest.items || []).map((a) => (a.published_at || "").slice(0, 10)));
-  if (manifest.items.length >= 3 && days.size < 3) return add("§20 Multi-day cadence", BLOCKED(`seed dates clustered: ${days.size} days`));
-  add("§20 Multi-day cadence", VERIFIED, `seed spans ${days.size} distinct days`);
+  const manifest = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json"));
+  const arts = manifestArticles(manifest);
+  const days = new Set(arts.map((a) => articlePublishedAt(a).slice(0, 10)).filter(Boolean));
+  if (arts.length >= 3 && days.size < 3) return add("§20 Multi-day cadence", BLOCKED(`seed dates clustered: ${days.size} days`));
+  add("§20 Multi-day cadence", VERIFIED, `${arts.length} seed articles spanning ${days.size} distinct days`);
 }
 
 // §21 Build passes
@@ -300,13 +318,14 @@ async function main() {
     console.log(`published=${c[0].c}, queued=${q[0].c}`);
     for (const r of h) console.log(`  ${r.d.toISOString().slice(0,10)}  ${r.c}`);
   } else {
-    const m = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json")) || { items: [] };
+    const m = readJsonSafe(path.join(ROOT, "client/public/content/preview-manifest.json"));
+    const arts = manifestArticles(m);
     const dist = {};
-    for (const a of m.items) {
-      const d = (a.published_at || "").slice(0, 10);
+    for (const a of arts) {
+      const d = articlePublishedAt(a).slice(0, 10);
       dist[d] = (dist[d] || 0) + 1;
     }
-    console.log(`published(seed)=${m.items.length}, queued=0`);
+    console.log(`published(seed)=${arts.length}, queued=0`);
     for (const d of Object.keys(dist).sort().reverse()) console.log(`  ${d}  ${dist[d]}`);
   }
 

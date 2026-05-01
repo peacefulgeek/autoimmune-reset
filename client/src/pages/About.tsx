@@ -19,7 +19,7 @@ export default function About() {
           </p>
           <h2>What you'll find here</h2>
           <p>
-            Essays on autoimmune root causes — leaky gut, the HPA axis, molecular mimicry,
+            Essays on autoimmune root causes ,  leaky gut, the HPA axis, molecular mimicry,
             childhood trauma, environmental toxins, infections like EBV. Practical guides to
             AIP, the Wahls Protocol, food sensitivity testing, supplements for recovery.
             Honest conversation about the emotional work nobody warns you about.
@@ -32,7 +32,7 @@ export default function About() {
           </p>
           <h2>Who writes this</h2>
           <p>
-            The Oracle Lover writes here — a longtime student of contemplative practice, body
+            The Oracle Lover writes here ,  a longtime student of contemplative practice, body
             wisdom, and the places medicine and meaning meet. Read more at{" "}
             <a href="https://theoraclelover.com" rel="noopener">theoraclelover.com</a>.
           </p>
@@ -52,7 +52,7 @@ export default function About() {
           <h3 className="text-base font-semibold mb-2">Sister site</h3>
           <p className="text-sm leading-relaxed">
             <a href="https://theoraclelover.com" rel="noopener" className="underline">The Oracle Lover</a>{" "}
-            is the larger writing project this site grows out of — body wisdom, contemplative practice,
+            is the larger writing project this site grows out of ,  body wisdom, contemplative practice,
             and the slower kinds of healing.
           </p>
         </div>

@@ -144,7 +144,7 @@ export default function Article() {
             <div className="p-5">
               <p className="text-xs uppercase tracking-[.18em] text-[oklch(0.45_0.075_150)] mb-2">Original illustration</p>
               <p className="text-sm text-[oklch(0.40_0.02_145)] leading-relaxed">
-                Painted for {article.title} — soft watercolor on warm cream paper.
+                Painted for {article.title} ,  soft watercolor on warm cream paper.
               </p>
             </div>
           </div>
